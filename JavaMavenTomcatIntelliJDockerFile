@@ -1,0 +1,30 @@
+# Step 0: Install base Ubuntu image
+  FROM ubuntu
+  MAINTAINER Joe San "codeintheopen@gmail.com"
+  RUN apt-get update
+  RUN apt-get install software-properties-common -y
+  # install utilities
+  RUN apt-get -y install vim git sudo zip
+  # Let us make a directory called softwares inside /opt
+  RUN mkdir /opt/softwares
+
+# Step 1: Install Java 7, set Java Home
+  RUN add-apt-repository ppa:webupd8team/java -y && \
+    apt-get update -y && \
+    # Accept licence
+    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+    apt-get install oracle-java7-installer -y && \
+  # Set JAVA_HOME
+  ENV JAVA_HOME /usr/lib/jvm/java-7-oracle
+
+# Step 2: Install Maven 3.x.x, set Maven Home
+  ENV MAVEN_VERSION 3.2.3
+  RUN curl http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xvf -C /opt/softwares/maven/
+  ENV MAVEN_HOME /opt/softwares/maven/apache-maven-$MAVEN_VERSION/bin/
+
+# Step 3: Install Tomcat, set Tomcat Home
+  RUN apt-get -y install tomcat7
+  EXPOSE 8080
+  
+# Step 4: Install IntelliJ
+  RUN curl -L http://download.jetbrains.com/idea/ideaIC-13.1.4b.tar.gz | tar xvf -C /opt/softwares/intellij/
